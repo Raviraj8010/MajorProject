@@ -8,6 +8,8 @@ const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 
+
+
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 main()
@@ -52,9 +54,7 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 //Create Route
-app.post(
-    "/listings", 
-    wrapAsync(async (req, res, next) => {
+app.post("/listings", wrapAsync(async (req, res, next) => {
         const newListing = new Listing(req.body.listing);
         await newListing.save();
         res.redirect("/listings");
@@ -63,7 +63,7 @@ app.post(
 
 //Edit Route
 app.get("/listings/:id/edit", async (req, res) => {
-    let {id} = req.params;
+    let { id } = req.params;
     const listing = await Listing.findById(id);
     res.render("listings/edit.ejs", { listing });
 });
@@ -72,7 +72,7 @@ app.get("/listings/:id/edit", async (req, res) => {
 app.put("/listings/:id", async (req, res) => {
     const { id } = req.params;
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    res.redirect(`/listings/${id}`);
+    res.redirect(`/listings/${ id }`);
 });
 
 //Delete Route
@@ -97,9 +97,9 @@ app.delete("/listings/:id", async (req, res) => {
 //     res.send("successful testing");
 // });
 
-app.all("*", (req, res, next) => {
-    next(new ExpressError(404, "Page Not Found!"));
-});
+// app.all("*", (req, res, next) => {
+//     next(new ExpressError(404, "Page Not Found!"));
+// });
 
 app.use((err, req, res, next) => {
     let { statusCode, message } = err;
@@ -109,3 +109,5 @@ app.use((err, req, res, next) => {
 app.listen(8080, () => {
     console.log("server is listening to port 8080");
 });
+
+
