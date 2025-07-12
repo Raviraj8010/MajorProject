@@ -7,30 +7,37 @@
             <img 
                 src="<%= listing.image.url %>" 
                 class="card-img-top show-img" 
-                alt="listing_image">
+                alt="listing_image"
+            />
             <div class="card-body">
-                <p class="card-text">
-                    <%= listing.description %> <br>
-                    <% if (listing.price !== undefined && listing.price !== null) { %>
-                        &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
-                    <% } else { %>
-                        Price: N/A
-                    <% } %> <br>
-                    <%= listing.location %> <br>
-                    <%= listing.country %>
-                </p>    
+                <p class="card-text">Owned by <i><%= listing.owner.username %></i></p>
+                    <p class="card-text"><%= listing.description %></p>
+                    <p class="card-text">
+                        <% if (listing.price !== undefined && listing.price !== null) { %>
+                            &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
+                        <% } else { %>
+                            Price: N/A
+                        <% } %>
+                    </p>
+                    <p class="card-text"><%= listing.location %></p>
+                    <p class="card-text"><%= listing.country %></p>
             </div>
         </div>
+
         <br />
+
+        <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
         <div class="btns">
             <a 
                 href="/listings/<%= listing._id %>/edit" 
                 class="btn btn-dark col-1 offset-3 edit-btn">Edit
             </a>
+
             <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
                 <button class="btn btn-dark offset-5">Delete</button>
             </form>
         </div>
+        <% } %>
 
     <div class="col-8 offset-3 mb-3">
         <hr>
