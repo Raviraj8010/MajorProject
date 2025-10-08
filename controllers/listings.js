@@ -1,6 +1,8 @@
 const Listing = require('../models/listing.js');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const mapToken = process.env.MAP_TOKEN;
+
+// ✅ Use the correct environment variable name
+const mapToken = process.env.MAP_TOKEN; 
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 module.exports.index = async (req, res) => {
@@ -12,23 +14,56 @@ module.exports.renderNewForm = (req, res) => {
     res.render("listings/new.ejs");
 };
 
+// ✅ Fixed showListing: removed duplicate & added mapToken
+// module.exports.showListing = async (req, res) => {
+//     let { id } = req.params;
+
+//     const listing = await Listing.findById(id)
+//         .populate("owner")
+//         .populate({
+//             path: "reviews",
+//             populate: { path: "author" }
+//         });
+
+//     if (!listing) {
+//         req.flash("error", "Listing you requested for does not exist!");
+//         return res.redirect("/listings");
+//     }
+
+//     // Optional: log to verify owner
+//     console.log(listing.owner);
+
+//     // ✅ Pass mapToken to the template
+//     res.render("listings/show.ejs", { listing, currUser: req.user, mapToken });
+// };
+
+
 module.exports.showListing = async (req, res) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id)
-        .populate({
-            path: "reviews",
-            populate: {
-                path: "author",
-            },
-        })
-        .populate("owner");
-    if(!listing) {
-    req.flash("error", "Listing you requested for does not exist!");
-        return res.redirect("/listings");
+    try {
+        const listing = await Listing.findById(req.params.id)
+            .populate("owner") // populate owner info
+            .populate({
+                path: "reviews",
+                populate: { path: "author" } // populate author for each review
+            });
+
+        if (!listing) {
+            req.flash("error", "Listing not found!");
+            return res.redirect("/listings");
+        }
+
+        res.render("listings/show", { 
+            listing, 
+            currUser: req.user, 
+            mapToken: process.env.MAP_TOKEN 
+        });
+    } catch (err) {
+        console.log(err);
+        req.flash("error", "Something went wrong!");
+        res.redirect("/listings");
     }
-    console.log(listing);
-    res.render("listings/show.ejs", { listing });
 };
+
 
 module.exports.createListing = async (req, res, next) => {
     let response = await geocodingClient
@@ -86,4 +121,3 @@ module.exports.destroyListing = async (req, res) => {
     req.flash("success", "Listing Deleted!");
     res.redirect("/listings");
 };
-

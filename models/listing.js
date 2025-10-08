@@ -37,10 +37,6 @@ const listingSchema = new Schema({
     },
   },
   
-  // category: {
-  //   type: String,
-  //   enum: ["mountain", "arctic", "farms", "deserts"]
-  // }
 });
 
 listingSchema.post("findOneAndDelete", async (listing) => {
@@ -51,3 +47,4 @@ listingSchema.post("findOneAndDelete", async (listing) => {
 
 const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing;
+

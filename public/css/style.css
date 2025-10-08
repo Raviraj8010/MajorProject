@@ -126,7 +126,12 @@ main.main-content {
 }
 
 /* Map */
-#map { 
+/* #map { 
     height: 300px;
     width: 80vh;
+} */
+
+#map {
+  width: 100%;
+  height: 400px;
 }

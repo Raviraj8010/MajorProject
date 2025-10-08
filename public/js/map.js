@@ -1,16 +1,21 @@
-mapboxgl.accessToken = mapToken;
+mapboxgl.accessToken = mapToken; 
+
+// Parse listing if needed
+const listingData = typeof listingObj === "string" ? JSON.parse(listingObj) : listingObj;
 
 const map = new mapboxgl.Map({
-    container: 'map', // container ID
-    center: listing.geometry.coordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
-    zoom: 10 // starting zoom
+    container: 'map', // id of the div
+    style: 'mapbox://styles/mapbox/streets-v12',
+    center: listingData.geometry ? listingData.geometry.coordinates : [0, 0], // [lon, lat]
+    zoom: 10
 });
 
-const marker1 = new mapboxgl.Marker({ color: 'red' })
-    .setLngLat(listing.geometry.coordinates) //Listing.geometry.coordinates
-    .setPopup(
-        new mapboxgl.Popup({offset: 25}).setHTML(
-            `<h4>${listing.title}</h4><p>Exact Location will be provided after booking.</p>`
+if(listingData.geometry) {
+    new mapboxgl.Marker()
+        .setLngLat(listingData.geometry.coordinates)
+        .setPopup(
+            new mapboxgl.Popup({ offset: 25 })
+                .setHTML(`<h6>${listingData.title}</h6>`)
         )
-    )
-    .addTo(map);        
+        .addTo(map);
+}
